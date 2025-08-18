@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "job-application-automator"
+version = "1.2.7"
+description = "Automated job application form extraction, filling, and job matching with dual MCP server integration and smart prerequisites detection"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    {name = "Job Automator Team", email = "contact@jobautomator.dev"},
+]
+keywords = ["mcp", "job-application", "automation", "claude-desktop", "form-filling", "playwright", "web-automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11", 
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business",
+    "Topic :: Internet :: WWW/HTTP :: Browsers",
+]
+
+dependencies = [
+    "mcp>=1.11.0",
+    "playwright>=1.40.0",
+    "undetected-playwright>=0.3.0", 
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0",
+    "requests>=2.28.0",
+    "geocoder>=1.38.1",
+    "pydantic>=2.0.0",
+    "typing-extensions>=4.8.0",
+    "httpx",
+]
+
+[project.scripts]
+job-automator-mcp = "job_application_automator.mcp_server:main"
+job-automator-setup = "job_application_automator.setup_claude:main"
+
+[project.urls]
+Homepage = "https://pypi.org/project/job-application-automator/"
+Documentation = "https://pypi.org/project/job-application-automator/"
+Repository = "https://github.com/your-username/job-application-automator"
+Issues = "https://github.com/your-username/job-application-automator/issues"
+
+[tool.setuptools]
+packages = ["job_application_automator", "job_application_automator.mcp_config"]
+
+[tool.setuptools.package-data]
+job_application_automator = ["*.md", "*.txt", "*.json"]
+"job_application_automator.mcp_config" = ["*.md", "*.json"]
