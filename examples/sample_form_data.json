@@ -1,0 +1,185 @@
+{
+  "url": "https://example-company.com/careers/software-engineer",
+  "timestamp": "2025-09-16T10:30:00.000000",
+  "job_title": "Senior Software Engineer",
+  "company": "Example Tech Company",
+  "form_context": {
+    "is_iframe": true,
+    "iframe_src": "https://boards.greenhouse.io/exampletech/jobs/123456",
+    "iframe_selector": "iframe[src*=\"greenhouse\"]",
+    "iframe_index": 0,
+    "wait_strategy": "domcontentloaded",
+    "load_timeout": 15000
+  },
+  "total_fields": 12,
+  "required_fields": 8,
+  "fields": [
+    {
+      "id": "first_name",
+      "name": "first_name",
+      "label": "First Name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "last_name", 
+      "name": "last_name",
+      "label": "Last Name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "email",
+      "name": "email", 
+      "label": "Email Address",
+      "type": "email",
+      "required": true
+    },
+    {
+      "id": "phone",
+      "name": "phone",
+      "label": "Phone Number",
+      "type": "phone",
+      "required": true,
+      "country_selector": true,
+      "country_options": [
+        {"text": "United States (+1)", "value": "us"},
+        {"text": "Canada (+1)", "value": "ca"},
+        {"text": "United Kingdom (+44)", "value": "gb"}
+      ]
+    },
+    {
+      "id": "resume",
+      "name": "resume",
+      "label": "Resume/CV",
+      "type": "file",
+      "required": true,
+      "accepted_types": [".pdf", ".doc", ".docx"]
+    },
+    {
+      "id": "cover_letter",
+      "name": "cover_letter", 
+      "label": "Cover Letter",
+      "type": "file",
+      "required": false,
+      "accepted_types": [".pdf", ".doc", ".docx", ".txt"]
+    },
+    {
+      "id": "years_experience",
+      "name": "years_experience",
+      "label": "Years of Experience",
+      "type": "dropdown",
+      "required": true,
+      "supports_custom_input": true,
+      "options": [
+        {"text": "Less than 1 year", "value": "0-1"},
+        {"text": "1-2 years", "value": "1-2"},
+        {"text": "3-5 years", "value": "3-5"},
+        {"text": "5+ years", "value": "5+"}
+      ],
+      "options_note": "Select from the available options."
+    },
+    {
+      "id": "linkedin_url",
+      "name": "linkedin_url",
+      "label": "LinkedIn Profile URL", 
+      "type": "url",
+      "required": false
+    },
+    {
+      "id": "why_interested",
+      "name": "why_interested",
+      "label": "Why are you interested in this position?",
+      "type": "textarea", 
+      "required": true
+    },
+    {
+      "id": "gender_identity",
+      "name": "gender_identity",
+      "label": "What is your gender identity?",
+      "type": "dropdown",
+      "required": false,
+      "supports_custom_input": true,
+      "options": [
+        {"text": "Woman", "value": "woman"},
+        {"text": "Man", "value": "man"},
+        {"text": "Non-binary", "value": "non_binary"},
+        {"text": "Prefer not to answer", "value": "prefer_not_to_answer"}
+      ],
+      "options_note": "These are sample options. You can type any value that matches your specific case.",
+      "original_type": "checkbox_group"
+    }
+  ],
+  "user_input_template": [
+    {
+      "id": "first_name",
+      "question": "First Name",
+      "value": "John",
+      "required": true,
+      "type": "text"
+    },
+    {
+      "id": "last_name",
+      "question": "Last Name", 
+      "value": "Doe",
+      "required": true,
+      "type": "text"
+    },
+    {
+      "id": "email",
+      "question": "Email Address",
+      "value": "john.doe@email.com",
+      "required": true,
+      "type": "email"
+    },
+    {
+      "id": "phone",
+      "question": "Phone Number",
+      "value": "+1-555-123-4567",
+      "required": true,
+      "type": "phone"
+    },
+    {
+      "id": "resume",
+      "question": "Resume/CV",
+      "value": "C:\\Users\\John\\Documents\\resume.pdf",
+      "required": true,
+      "type": "file"
+    },
+    {
+      "id": "cover_letter",
+      "question": "Cover Letter",
+      "value": "C:\\Users\\John\\Documents\\cover_letter_example_tech.pdf",
+      "required": false,
+      "type": "file"
+    },
+    {
+      "id": "years_experience",
+      "question": "Years of Experience",
+      "value": "3-5",
+      "required": true,
+      "type": "dropdown"
+    },
+    {
+      "id": "linkedin_url",
+      "question": "LinkedIn Profile URL",
+      "value": "https://linkedin.com/in/johndoe",
+      "required": false,
+      "type": "url"
+    },
+    {
+      "id": "why_interested",
+      "question": "Why are you interested in this position?", 
+      "value": "I am excited about this opportunity because it aligns with my experience in software development and my passion for building scalable systems. Your company's commitment to innovation and the specific technologies mentioned in the job description match perfectly with my background and career goals.",
+      "required": true,
+      "type": "textarea"
+    },
+    {
+      "id": "gender_identity",
+      "question": "What is your gender identity?",
+      "value": "prefer_not_to_answer",
+      "required": false,
+      "type": "dropdown"
+    }
+  ]
+}
