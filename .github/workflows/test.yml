@@ -1,0 +1,184 @@
+name: Test Installation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-installation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Install Playwright browsers
+      run: |
+        playwright install chromium
+
+    - name: Test package import
+      run: |
+        python -c "import job_application_automator; print('✅ Package imported successfully')"
+        python -c "from job_application_automator.form_extractor import SimpleFormExtractor; print('✅ FormExtractor imported')"
+        python -c "from job_application_automator.form_filler import SimpleFormFiller; print('✅ FormFiller imported')"
+
+    - name: Test MCP server module
+      run: |
+        python -c "import job_application_automator.mcp_server; print('✅ MCP server module imported')"
+
+    - name: Run prerequisites check
+      run: |
+        python scripts/check_prerequisites.py --check-only
+
+    - name: Test setup script (dry run)
+      if: runner.os != 'Windows'
+      run: |
+        # Test that the setup script runs without actually configuring Claude
+        python -c "
+        import sys
+        sys.path.insert(0, 'job_application_automator')
+        from setup_claude import check_python, check_nodejs
+        print('Prerequisites check passed' if check_python() else 'Prerequisites check failed')
+        "
+
+  test-mcp-functionality:
+    runs-on: ubuntu-latest
+    needs: test-installation
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install package
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        playwright install chromium
+
+    - name: Test MCP tools basic functionality
+      run: |
+        python -c "
+        import asyncio
+        import sys
+        import os
+        sys.path.insert(0, 'job_application_automator')
+        
+        async def test_extractor():
+            try:
+                from form_extractor import SimpleFormExtractor
+                extractor = SimpleFormExtractor()
+                print('✅ FormExtractor instantiated successfully')
+                return True
+            except Exception as e:
+                print(f'❌ FormExtractor test failed: {e}')
+                return False
+        
+        async def test_filler():
+            try:
+                from form_filler import SimpleFormFiller
+                filler = SimpleFormFiller()
+                print('✅ FormFiller instantiated successfully')
+                return True
+            except Exception as e:
+                print(f'❌ FormFiller test failed: {e}')
+                return False
+        
+        async def main():
+            extractor_ok = await test_extractor()
+            filler_ok = await test_filler()
+            if not (extractor_ok and filler_ok):
+                sys.exit(1)
+            print('✅ All MCP functionality tests passed')
+        
+        asyncio.run(main())
+        "
+
+  validate-package-structure:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Validate package structure
+      run: |
+        echo "📁 Checking required files..."
+        required_files=(
+          "job_application_automator/__init__.py"
+          "job_application_automator/mcp_server.py"
+          "job_application_automator/form_extractor.py"
+          "job_application_automator/form_filler.py"
+          "job_application_automator/setup_claude.py"
+          "pyproject.toml"
+          "requirements.txt"
+          "README.md"
+          "INSTALL.md"
+          ".gitignore"
+          "scripts/quick_setup.py"
+          "examples/claude_config_example.json"
+        )
+        
+        missing_files=()
+        for file in "${required_files[@]}"; do
+          if [[ ! -f "$file" ]]; then
+            missing_files+=("$file")
+          else
+            echo "✅ $file"
+          fi
+        done
+        
+        if [[ ${#missing_files[@]} -ne 0 ]]; then
+          echo "❌ Missing required files:"
+          printf '  - %s\n' "${missing_files[@]}"
+          exit 1
+        fi
+        
+        echo "📁 Checking that unwanted files are excluded..."
+        unwanted_patterns=(
+          "build/"
+          "dist/"
+          "*.egg-info/"
+          "__pycache__/"
+          "claude_desktop_config.json"
+          "applied_jobs.txt"
+          "cover_letters/"
+          "extracted_form_data/"
+        )
+        
+        found_unwanted=()
+        for pattern in "${unwanted_patterns[@]}"; do
+          if ls $pattern 2>/dev/null | grep -q .; then
+            found_unwanted+=("$pattern")
+          fi
+        done
+        
+        if [[ ${#found_unwanted[@]} -ne 0 ]]; then
+          echo "❌ Found unwanted files/directories:"
+          printf '  - %s\n' "${found_unwanted[@]}"
+          exit 1
+        fi
+        
+        echo "✅ Package structure validation passed"
